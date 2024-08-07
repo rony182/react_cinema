@@ -93,7 +93,6 @@ const FunctionForm = ({
 
   return (
     <Form onSubmit={handleSubmit}>
-      {error && <Alert variant="danger">{error}</Alert>}
       <Row>
         <Col md={4}>
           <Form.Group controlId="formDate">
@@ -130,11 +129,13 @@ const FunctionForm = ({
               value={formValues.price}
               onChange={handleChange}
               required
+              placeholder="0.00"
             />
           </Form.Group>
         </Col>
       </Row>
-      <div className="form-submit-button">
+      {error && <Alert variant="danger">{error}</Alert>}
+      <div className="form-submit-button gap-1">
         <Button variant="primary" type="submit" alt="Save">
           {editingFunction ? "Update Function" : "Add Function"}
         </Button>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Table, Button, Alert, Modal } from "react-bootstrap";
 import FunctionForm from "./FunctionForm";
 
@@ -6,7 +7,6 @@ const FunctionList = ({
   movie,
   directors,
   functions,
-  onBack,
   addFunction,
   updateFunction,
   deleteFunction,
@@ -17,6 +17,7 @@ const FunctionList = ({
   const [success, setSuccess] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [functionToDelete, setFunctionToDelete] = useState(null);
+  const navigate = useNavigate();
 
   const handleAddFunction = (newFunction) => {
     const formattedDate = newFunction.date;
@@ -72,9 +73,13 @@ const FunctionList = ({
     return director ? director.name : "Unknown";
   };
 
+  const handleBack = () => {
+    navigate("/");
+  };
+
   return (
-    <div className="container mt-3 mb-3">
-      <Button variant="secondary" onClick={onBack} className="mb-3">
+    <div className="container mt-3 mb-3 text-center">
+      <Button variant="secondary" onClick={handleBack} className="mb-3">
         Back to Movies
       </Button>
       <h2>{movie.name} Functions</h2>
@@ -100,7 +105,7 @@ const FunctionList = ({
                 <td>{func.scheduleHour}</td>
                 <td>{getDirectorName(func.director)}</td>
                 <td>{func.price}</td>
-                <td>
+                <td className="d-flex gap-1 justify-content-center">
                   <Button
                     variant="warning"
                     className="mr-2"

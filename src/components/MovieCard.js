@@ -4,9 +4,9 @@ import { Card, Button } from "react-bootstrap";
 const MovieCard = ({ movie, onSelect }) => {
   return (
     <Card className="mb-3">
-      <Card.Body>
+      <Card.Body className="text-center">
         <Card.Title>{movie.name}</Card.Title>
-        <Button variant="primary" onClick={() => onSelect(movie)}>
+        <Button className="mt-2" variant="primary" onClick={() => onSelect(movie)}>
           View Functions
         </Button>
       </Card.Body>

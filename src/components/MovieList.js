@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import MovieCard from "./MovieCard";
-import moviesData from "../data/movies.json";
 
-const MovieList = ({ onSelectMovie }) => {
-  const [movies, setMovies] = useState([]);
+const MovieList = ({ movies }) => {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    setMovies(moviesData);
-  }, []);
+  const handleSelectMovie = (movie) => {
+    navigate(`/movie/${movie.id}`);
+  };
 
   return (
     <div className="container mt-3">
       <div className="row">
         {movies.map((movie) => (
           <div className="col-md-4" key={movie.id}>
-            <MovieCard movie={movie} onSelect={onSelectMovie} />
+            <MovieCard movie={movie} onSelect={() => handleSelectMovie(movie)} />
           </div>
         ))}
       </div>
