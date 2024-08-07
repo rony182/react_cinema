@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "name": "City of God",
+    "directorId": 1,
+    "type": "national"
+  },
+  {
+    "id": 2,
+    "name": "Elite Squad",
+    "directorId": 2,
+    "type": "national"
+  },
+  {
+    "id": 3,
+    "name": "Central Station",
+    "directorId": 3,
+    "type": "national"
+  },
+  {
+    "id": 4,
+    "name": "The Year My Parents Went on Vacation",
+    "directorId": 4,
+    "type": "national"
+  },
+  {
+    "id": 5,
+    "name": "Carandiru",
+    "directorId": 5,
+    "type": "national"
+  },
+  {
+    "id": 6,
+    "name": "Inception",
+    "directorId": 6,
+    "type": "international"
+  },
+  {
+    "id": 7,
+    "name": "E.T. the Extra-Terrestrial",
+    "directorId": 7,
+    "type": "international"
+  },
+  {
+    "id": 8,
+    "name": "Goodfellas",
+    "directorId": 8,
+    "type": "international"
+  },
+  {
+    "id": 9,
+    "name": "Pulp Fiction",
+    "directorId": 9,
+    "type": "international"
+  },
+  {
+    "id": 10,
+    "name": "Fight Club",
+    "directorId": 10,
+    "type": "international"
+  },
+  {
+    "id": 11,
+    "name": "The Grand Budapest Hotel",
+    "directorId": 6,
+    "type": "international"
+  },
+  {
+    "id": 12,
+    "name": "2001: A Space Odyssey",
+    "directorId": 7,
+    "type": "international"
+  },
+  {
+    "id": 13,
+    "name": "Psycho",
+    "directorId": 8,
+    "type": "international"
+  },
+  {
+    "id": 14,
+    "name": "The Godfather",
+    "directorId": 9,
+    "type": "international"
+  },
+  {
+    "id": 15,
+    "name": "The Good, the Bad and the Ugly",
+    "directorId": 10,
+    "type": "international"
+  }
+]

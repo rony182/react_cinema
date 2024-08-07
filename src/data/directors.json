@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Fernando Meirelles"
+  },
+  {
+    "id": 2,
+    "name": "José Padilha"
+  },
+  {
+    "id": 3,
+    "name": "Walter Salles"
+  },
+  {
+    "id": 4,
+    "name": "Cao Hamburger"
+  },
+  {
+    "id": 5,
+    "name": "Héctor Babenco"
+  },
+  {
+    "id": 6,
+    "name": "Christopher Nolan"
+  },
+  {
+    "id": 7,
+    "name": "Steven Spielberg"
+  },
+  {
+    "id": 8,
+    "name": "Martin Scorsese"
+  },
+  {
+    "id": 9,
+    "name": "Quentin Tarantino"
+  },
+  {
+    "id": 10,
+    "name": "David Fincher"
+  }
+]
