@@ -10,27 +10,31 @@ const FunctionForm = ({
   setEditingFunction,
 }) => {
   const [formValues, setFormValues] = useState({
-    date: "",
-    scheduleHour: "",
-    price: "",
+    Date: "",
+    ScheduleHour: "",
+    Price: "",
   });
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (editingFunction) {
       setFormValues({
-        date: editingFunction.date,
-        scheduleHour: editingFunction.scheduleHour,
-        price: editingFunction.price,
+        Date: editingFunction.date || "",
+        ScheduleHour: editingFunction.scheduleHour || "",
+        Price: editingFunction.price !== undefined ? editingFunction.price : "",
       });
     } else {
-      setFormValues({
-        date: "",
-        scheduleHour: "",
-        price: "",
-      });
+      resetForm();
     }
   }, [editingFunction]);
+
+  const resetForm = () => {
+    setFormValues({
+      Date: "",
+      ScheduleHour: "",
+      Price: "",
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +48,7 @@ const FunctionForm = ({
     e.preventDefault();
 
     const currentDate = new Date();
-    const selectedDate = new Date(formValues.date);
+    const selectedDate = new Date(formValues.Date);
     const maxDate = new Date();
     maxDate.setDate(currentDate.getDate() + 14);
 
@@ -56,26 +60,38 @@ const FunctionForm = ({
       return;
     }
 
-    const formattedDate = formValues.date;
+    if (!formValues.ScheduleHour || formValues.ScheduleHour === "00:00:00") {
+      setError("Please select a valid schedule hour.");
+      return;
+    }
+
+    if (parseFloat(formValues.Price) <= 0) {
+      setError("Price must be greater than zero.");
+      return;
+    }
+
+    const functionData = {
+      id: editingFunction ? editingFunction.id : null,
+      Date: formValues.Date,
+      ScheduleHour:
+        formValues.ScheduleHour.length === 5
+          ? `${formValues.ScheduleHour}:00`
+          : formValues.ScheduleHour,
+      Price: parseFloat(formValues.Price),
+      MovieId: movie.id,
+    };
 
     if (editingFunction) {
-      updateFunction({
-        ...formValues,
-        date: formattedDate,
-        director: movie.directorId,
-      });
+      if (editingFunction.id) {
+        updateFunction(functionData);
+      } else {
+        console.error("Function ID is undefined");
+      }
     } else {
-      addFunction({
-        ...formValues,
-        date: formattedDate,
-        director: movie.directorId,
-      });
+      addFunction(functionData);
     }
-    setFormValues({
-      date: "",
-      scheduleHour: "",
-      price: "",
-    });
+
+    resetForm();
     setEditingFunction(null);
     setError("");
   };
@@ -99,8 +115,8 @@ const FunctionForm = ({
             <Form.Label>Date</Form.Label>
             <Form.Control
               type="date"
-              name="date"
-              value={formValues.date}
+              name="Date"
+              value={formValues.Date}
               min={getCurrentDate()}
               max={getMaxDate()}
               onChange={handleChange}
@@ -113,8 +129,8 @@ const FunctionForm = ({
             <Form.Label>Schedule Hour</Form.Label>
             <Form.Control
               type="time"
-              name="scheduleHour"
-              value={formValues.scheduleHour}
+              name="ScheduleHour"
+              value={formValues.ScheduleHour}
               onChange={handleChange}
               required
             />
@@ -125,11 +141,13 @@ const FunctionForm = ({
             <Form.Label>Price</Form.Label>
             <Form.Control
               type="number"
-              name="price"
-              value={formValues.price}
+              name="Price"
+              value={formValues.Price}
               onChange={handleChange}
               required
               placeholder="0.00"
+              min="0"
+              step="0.01"
             />
           </Form.Group>
         </Col>
@@ -143,7 +161,10 @@ const FunctionForm = ({
           <Button
             alt="Cancel"
             variant="secondary"
-            onClick={() => setEditingFunction(null)}
+            onClick={() => {
+              resetForm();
+              setEditingFunction(null);
+            }}
             className="ml-2"
           >
             Cancel

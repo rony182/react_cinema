@@ -1,88 +1,101 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Table, Button, Alert, Modal } from "react-bootstrap";
 import FunctionForm from "./FunctionForm";
-
-const FunctionList = ({
-  movie,
-  directors,
-  functions,
+import {
+  fetchFunctions,
   addFunction,
   updateFunction,
   deleteFunction,
-  allFunctions,
-}) => {
-  const [editingFunction, setEditingFunction] = useState(null);
+  fetchDirectorByMovieId,
+} from "../Services/apiService";
+
+const FunctionList = ({ getMovieById }) => {
+  const [functions, setFunctions] = useState([]);
+  const [director, setDirector] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [functionToDelete, setFunctionToDelete] = useState(null);
+  const [editingFunction, setEditingFunction] = useState(null);
+  const { id } = useParams();
   const navigate = useNavigate();
+  const movie = getMovieById(id);
 
-  const handleAddFunction = (newFunction) => {
-    const formattedDate = newFunction.date;
+  useEffect(() => {
+    const loadFunctionsAndDirector = async () => {
+      try {
+        setError("");
+        const [functionsResponse, directorResponse] = await Promise.all([
+          fetchFunctions(id),
+          fetchDirectorByMovieId(id),
+        ]);
+        setFunctions(functionsResponse.data);
+        setDirector(directorResponse.data);
+      } catch (error) {
+        setError("Error loading functions or director.");
+      }
+    };
 
-    const directorDayFunctionsCount = functions.filter(
-      (func) =>
-        func.director === newFunction.director && func.date === formattedDate
-    ).length;
+    loadFunctionsAndDirector();
+  }, [id]);
 
-    const internationalDayFunctionsCount = Object.values(allFunctions)
-      .flat()
-      .filter(
-        (func) => func.date === formattedDate && func.type === "international"
-      ).length;
-
-    if (directorDayFunctionsCount >= 10) {
-      setError(
-        "Cannot add more than 10 functions for this director on the same day."
-      );
-      return;
+  const handleAddFunction = async (newFunction) => {
+    try {
+      const response = await addFunction(newFunction);
+      setFunctions((prevFunctions) => [...prevFunctions, response.data]);
+      setError("");
+      setSuccess("Function added successfully.");
+    } catch (error) {
+      setError("Error adding function.");
     }
+  };
 
-    if (movie.type === "international" && internationalDayFunctionsCount >= 8) {
-      setError(
-        "Cannot add more than 8 international functions on the same day."
+  const handleUpdateFunction = async (updatedFunction) => {
+    try {
+      await updateFunction(updatedFunction.id, updatedFunction);
+
+      const functionWithId = { ...updatedFunction };
+
+      setFunctions((prevFunctions) =>
+        prevFunctions.map((func) =>
+          func.id === functionWithId.id ? functionWithId : func
+        )
       );
-      return;
+
+      setEditingFunction(null);
+      setError("");
+      setSuccess("Function updated successfully.");
+    } catch (error) {
+      setError("Error updating function.");
     }
-
-    addFunction(movie.id, newFunction);
-    setError("");
   };
 
-  const handleUpdateFunction = (updatedFunction) => {
-    updateFunction(movie.id, updatedFunction);
-    setEditingFunction(null);
-  };
-
-  const handleDeleteFunction = (funcToDelete) => {
-    setShowModal(true);
-    setFunctionToDelete(funcToDelete);
-  };
-
-  const confirmDeleteFunction = () => {
-    deleteFunction(movie.id, functionToDelete);
-    setSuccess("Function deleted successfully.");
-    setShowModal(false);
-    setFunctionToDelete(null);
-  };
-
-  const getDirectorName = (id) => {
-    const director = directors.find((director) => director.id === id);
-    return director ? director.name : "Unknown";
-  };
-
-  const handleBack = () => {
-    navigate("/");
+  const handleDeleteFunction = async () => {
+    try {
+      await deleteFunction(functionToDelete.id);
+      setFunctions((prevFunctions) =>
+        prevFunctions.filter((func) => func.id !== functionToDelete.id)
+      );
+      setSuccess("Function deleted successfully.");
+      setShowModal(false);
+      setFunctionToDelete(null);
+    } catch (error) {
+      setError("Error deleting function.");
+    }
   };
 
   return (
     <div className="container mt-3 mb-3 text-center">
-      <Button variant="secondary" onClick={handleBack} className="mb-3">
+      <Button
+        variant="secondary"
+        onClick={() => navigate("/")}
+        className="mb-3"
+      >
         Back to Movies
       </Button>
-      <h2>{movie.name} Functions</h2>
+      <h2>{movie.title} Functions</h2>
+      {director && <h4 className="text-muted">Directed by: {director.name}</h4>}
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
       {functions.length === 0 ? (
@@ -93,7 +106,6 @@ const FunctionList = ({
             <tr>
               <th>Date</th>
               <th>Schedule Hour</th>
-              <th>Director</th>
               <th>Price</th>
               <th>Actions</th>
             </tr>
@@ -101,10 +113,11 @@ const FunctionList = ({
           <tbody>
             {functions.map((func, index) => (
               <tr key={index}>
-                <td>{func.date}</td>
-                <td>{func.scheduleHour}</td>
-                <td>{getDirectorName(func.director)}</td>
-                <td>{func.price}</td>
+                <td>{func.date ? func.date : func.Date}</td>
+                <td>
+                  {func.scheduleHour ? func.scheduleHour : func.ScheduleHour}
+                </td>
+                <td>{func.price ? func.price : func.Price}</td>
                 <td className="d-flex gap-1 justify-content-center">
                   <Button
                     variant="warning"
@@ -115,7 +128,10 @@ const FunctionList = ({
                   </Button>
                   <Button
                     variant="danger"
-                    onClick={() => handleDeleteFunction(func)}
+                    onClick={() => {
+                      setShowModal(true);
+                      setFunctionToDelete(func);
+                    }}
                   >
                     Delete
                   </Button>
@@ -142,7 +158,7 @@ const FunctionList = ({
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="danger" onClick={confirmDeleteFunction}>
+          <Button variant="danger" onClick={handleDeleteFunction}>
             Delete
           </Button>
         </Modal.Footer>

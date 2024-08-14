@@ -5,8 +5,12 @@ const MovieCard = ({ movie, onSelect }) => {
   return (
     <Card className="mb-3">
       <Card.Body className="text-center">
-        <Card.Title>{movie.name}</Card.Title>
-        <Button className="mt-2" variant="primary" onClick={() => onSelect(movie)}>
+        <Card.Title>{movie.title}</Card.Title>
+        <Button
+          className="mt-2"
+          variant="primary"
+          onClick={() => onSelect(movie.id)}
+        >
           View Functions
         </Button>
       </Card.Body>
